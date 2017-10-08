@@ -2,98 +2,28 @@
 #  _*_ coding:utf8 _*_
 
 import telepot
-import time
 from telepot.namedtuple import ReplyKeyboardMarkup,KeyboardButton,InlineKeyboardMarkup, InlineKeyboardButton
 
+#might not be needed, determine if canteens are open
+import time
 
-bot = telepot.Bot('02707033:AAFbGsQBdQKN_0GMqNs-SqRco-nAda5iPfc')
+TOKEN = '402707033:AAFbGsQBdQKN_0GMqNs-SqRco-nAda5iPfc'
 
-
-# ============= markup keyboards for 3-level requests ===============
-# display clicable buttons for users to choose
-
-# === primary requests: service selection ===
-# by replay keyboards
-# function reutrn: selected service
-def welcome_keyboard():
-    tmp=ReplyKeyboardMarkup(keyboard=
-    [
-    [KeyboardButton(text='Nearest', request_location=True)],
-    ],
-    one_time_keyboard=True
-    )
-    return tmp
-
-def hcts_keyboard():
-    tmp=ReplyKeyboardMarkup(keyboard=
-    [
-    [KeyboardButton(text='Nearest', request_location=True)],
-
-    [KeyboardButton(text='Best')],
-
-    ],
-    one_time_keyboard=True
-    )
-    return tmp
-
-def vcts_keyboard():
-    tmp=ReplyKeyboardMarkup(keyboard=
-    [
-    [KeyboardButton(text='Nearest', request_location=True)],
-
-    [KeyboardButton(text='Best')],
-
-    ],
-    one_time_keyboard=True
-    )
-    return tmp
-
-def acts_keyboard():
-    tmp=ReplyKeyboardMarkup(keyboard=
-    [
-    [KeyboardButton(text='Nearest', request_location=True)],
-
-    [KeyboardButton(text='Best')],
-
-    ],
-    one_time_keyboard=True
-    )
-    return tmp
-#inline
-def canteen_keyboard_select(n):
-	# work in progress
-    halal_keyboard=InlineKeyboardMarkup(inline_keyboard=
-        [
-    	[InlineKeyboardButton(text='cantenn 1',callback_data='hcts')],
-	[InlineKeyboardButton(text='canteen 2',callback_data='hcts')],
-        [InlineKeyboardButton(text='canteen 4',callback_data='hcts')],
-    	[InlineKeyboardButton(text='canteen 9',callback_data='hcts')],
-        [InlineKeyboardButton(text='canteen 11',callback_data='hcts')],
-    	[InlineKeyboardButton(text='canteen 13',callback_data='hcts')],
-        [InlineKeyboardButton(text='canteen 14',callback_data='hcts')],
-    	[InlineKeyboardButton(text='canteen 16',callback_data='hcts')],
-        [InlineKeyboardButton(text='North Hill canteen',callback_data='hcts')],
-    	[InlineKeyboardButton(text='North Spine canteen',callback_data='hcts')],
-        [InlineKeyboardButton(text='South spine canteen',callback_data='hcts')],
-    	[InlineKeyboardButton(text='NIE canteen',callback_data='hcts')],
-        ]
-        )
+bot = telepot.Bot(TOKEN)
 
 
-
-
-# ============= calculation of the nearest library ===============
-# by comparing the distance between current location and different libraries
+#============= calculation of the nearest canteen ===============
+# by comparing the distance between current location and different canteens
 # function parameter: coordinate of current location
-# function return: index of the nearest library
-def nearest_canteen(x,y):
+# function return: index of the nearest canteen, list mz be written in foodbot.
+def Nearest_Canteen(x,y):
     dis=99999999
     n=0
     if (pow(x-1.346736,2)+pow(y-103.686092,2) < dis):#can 1
         dis = pow(x-1.346736,2)+pow(y-103.686092,2)
         n=0   	
-    if (pow(x-1.348329,2)+pow(y-103.685547,2) < dis):
-        dis = pow(x-1.348329,2)+pow(y-103.685547,2) #can 2
+    if (pow(x-1.348329,2)+pow(y-103.685547,2) < dis):#can 2
+        dis = pow(x-1.348329,2)+pow(y-103.685547,2) 
         n=1
     if (pow(x-1.344169,2)+pow(y-103.685429,2) < dis):#can 4
         dis = pow(x-1.344169,2)+pow(y-103.685429,2)
@@ -113,10 +43,97 @@ def nearest_canteen(x,y):
     if (pow(x-1.350299,2)+pow(y-103.680917,2) < dis):#can 16
         dis = pow(x-1.350299,2)+pow(y-103.680917,2)
         n=7
-#north hill north spine south spine nie
-
+    if (pow(x-1.352648,2)+pow(y-103.682108,2) < dis):#north hill canteen
+        dis = pow(x-1.352648,2)+pow(y-103.682108,2)
+        n=8        
+    if (pow(x-1.354395,2)+pow(y-103.680253,2) < dis):#north spine canteen
+        dis = pow(x-1.354395,2)+pow(y-103.680253,2)
+        n=9        
+    if (pow(x-1.342459,2)+pow(y-103.682426,2) < dis):#south spine canteen koufu
+        dis = pow(x-1.342459,2)+pow(y-103.682426,2)
+        n=10        
+    if (pow(x-1.348750,2)+pow(y-103.677611,2) < dis):#nie canteen
+        dis = pow(x-1.348750,2)+pow(y-103.677611,2)
+        n=11
+        
     return n
 
 
+# ============= markup keyboards for 3-level requests ===============
+# display clicable buttons for users to choose
+
+# === primary requests: service selection ===
+# by replay keyboards
+# function reutrn: selected service
+def Welcome_Keyboard():
+    tmp = ReplyKeyboardMarkup(keyboard = [
+    [KeyboardButton(text='Get_Location', request_location=True)],
+    ],
+    one_time_keyboard=True
+    )
+    return tmp
+
+def Food_Preference_Keyboard():
+    tmp = ReplyKeyboardMarkup(keyboard = [
+    [KeyboardButton(text = 'Halal Preference')],
+    [KeyboardButton(text = 'Vegetarian')],
+    [KeyboardButton(text = 'No Preference')]
+    ],
+    one_time_keyboard=True
+    )
+    return tmp
 
 
+#any canteens without halal/veg? will have to remove
+
+
+def Halal_Preference_Keyboard():
+    tmp = InlineKeyboardMarkup(inline_keyboard = [
+    [InlineKeyboardButton(text = 'Canteen 1', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 2', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 4', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 9', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 11', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 13', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 14', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'Canteen 16', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'North Hill Canteen', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'North Spine Canteen', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'South Spine Canteen', callback_data = 'hl')],
+    [InlineKeyboardButton(text = 'NIE Canteen', callback_data = 'hl')]
+    ])
+    return tmp
+
+def No_Preference_Keyboard():
+    tmp = InlineKeyboardMarkup(inline_keyboard = [
+    [InlineKeyboardButton(text = 'Canteen 1', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 2', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 4', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 9', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 11', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 13', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 14', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'Canteen 16', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'North Hill Canteen', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'North Spine Canteen', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'South Spine Canteen', callback_data = 'nil')],
+    [InlineKeyboardButton(text = 'NIE Canteen', callback_data = 'nil')]
+    ])
+    return tmp
+
+def Vegetarian_Preference_Keyboard():
+    tmp = InlineKeyboardMarkup(inline_keyboard = [
+    [InlineKeyboardButton(text = 'Canteen 1', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 2', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 4', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 9', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 11', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 13', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 14', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'Canteen 16', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'North Hill Canteen', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'North Spine Canteen', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'South Spine Canteen', callback_data = 'veg')],
+    [InlineKeyboardButton(text = 'NIE Canteen', callback_data = 'veg')]
+    ])
+    return tmp
